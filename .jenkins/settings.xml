@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    
+    <!-- ローカルリポジトリの場所 -->
+    <localRepository>/var/jenkins_home/.m2/repository</localRepository>
+    
+    <!-- プラグイングループ -->
+    <pluginGroups>
+        <pluginGroup>org.springframework.boot</pluginGroup>
+        <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+    </pluginGroups>
+    
+    <!-- プロキシ設定（必要に応じて） -->
+    <!--
+    <proxies>
+        <proxy>
+            <id>example-proxy</id>
+            <active>true</active>
+            <protocol>http</protocol>
+            <host>proxy.company.com</host>
+            <port>8080</port>
+            <nonProxyHosts>localhost|127.0.0.1|*.company.com</nonProxyHosts>
+        </proxy>
+    </proxies>
+    -->
+    
+    <!-- サーバー認証情報 -->
+    <servers>
+        <!-- Nexus/Artifactory リポジトリ用の認証情報 -->
+        <!--
+        <server>
+            <id>nexus-snapshots</id>
+            <username>${env.NEXUS_USERNAME}</username>
+            <password>${env.NEXUS_PASSWORD}</password>
+        </server>
+        <server>
+            <id>nexus-releases</id>
+            <username>${env.NEXUS_USERNAME}</username>
+            <password>${env.NEXUS_PASSWORD}</password>
+        </server>
+        -->
+        
+        <!-- Docker レジストリ用の認証情報 -->
+        <!--
+        <server>
+            <id>docker-registry</id>
+            <username>${env.DOCKER_USERNAME}</username>
+            <password>${env.DOCKER_PASSWORD}</password>
+        </server>
+        -->
+    </servers>
+    
+    <!-- プロファイル -->
+    <profiles>
+        <!-- 開発環境用プロファイル -->
+        <profile>
+            <id>development</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+        
+        <!-- ステージング環境用プロファイル -->
+        <profile>
+            <id>staging</id>
+            <properties>
+                <spring.profiles.active>staging</spring.profiles.active>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+        
+        <!-- 本番環境用プロファイル -->
+        <profile>
+            <id>production</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+        
+        <!-- SonarQube解析用プロファイル -->
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.host.url>http://sonarqube:9000</sonar.host.url>
+                <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+            </properties>
+        </profile>
+        
+        <!-- Jenkins CI/CD用プロファイル -->
+        <profile>
+            <id>jenkins</id>
+            <properties>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <maven.source.skip>true</maven.source.skip>
+                <skipITs>false</skipITs>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <name>Maven Central</name>
+                    <url>https://repo1.maven.org/maven2</url>
+                </repository>
+                <!-- プライベートリポジトリがある場合 -->
+                <!--
+                <repository>
+                    <id>company-nexus</id>
+                    <name>Company Nexus Repository</name>
+                    <url>http://nexus.company.com/repository/maven-public/</url>
+                </repository>
+                -->
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <name>Maven Plugin Repository</name>
+                    <url>https://repo1.maven.org/maven2</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    
+    <!-- アクティブプロファイル -->
+    <activeProfiles>
+        <activeProfile>jenkins</activeProfile>
+    </activeProfiles>
+</settings>
