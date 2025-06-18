@@ -1,7 +1,7 @@
 pipeline {
     agent any
       tools {
-        maven 'maven-3.9.10' // Jenkinsで設定されているMavenツール名
+        maven '3.9.10' // Jenkinsで設定されているMavenツール名
         jdk 'JDK17_Default' // Jenkinsで設定されているJDKツール名
     }
       environment {
@@ -17,8 +17,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         // タイムアウトを30分に設定
         timeout(time: 30, unit: 'MINUTES')
-        // Gitのチェックアウト時にsubmoduleも取得
-        gitLabConnection('gitlab')
     }
     
     stages {
@@ -254,17 +252,17 @@ pipeline {
         failure {
             echo 'ビルドが失敗しました。'
             // 失敗時の通知
-            script {
-                // slackSend channel: '#build-notifications',
-                //           color: 'danger',
-                //           message: ":x: ${PROJECT_NAME} - Build #${env.BUILD_NUMBER} failed on ${env.BRANCH_NAME}"
+            // script {
+            //     // slackSend channel: '#build-notifications',
+            //     //           color: 'danger',
+            //     //           message: ":x: ${PROJECT_NAME} - Build #${env.BUILD_NUMBER} failed on ${env.BRANCH_NAME}"
                 
-                // emailext (
-                //     subject: "Build Failed: ${PROJECT_NAME} - ${env.BRANCH_NAME}",
-                //     body: "Build #${env.BUILD_NUMBER} failed. Please check the console output for details.",
-                //     to: "${env.CHANGE_AUTHOR_EMAIL}"
-                // )
-            }
+            //     // emailext (
+            //     //     subject: "Build Failed: ${PROJECT_NAME} - ${env.BRANCH_NAME}",
+            //     //     body: "Build #${env.BUILD_NUMBER} failed. Please check the console output for details.",
+            //     //     to: "${env.CHANGE_AUTHOR_EMAIL}"
+            //     // )
+            // }
         }
         
         unstable {
